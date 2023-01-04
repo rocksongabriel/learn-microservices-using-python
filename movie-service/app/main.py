@@ -1,4 +1,5 @@
-from fastapi import FastAPI, status
+from fastapi import FastAPI, HTTPException, status
+
 from .models import Movie
 
 app = FastAPI()
@@ -71,3 +72,15 @@ async def add_movie(payload: Movie):
     movie = payload.dict()
     fake_movie_db.append(movie)
     return {"id": len(fake_movie_db) - 1}
+
+
+@app.put("/{id}/", tags=["Movies"])
+async def update_movie(id: int, payload: Movie):
+    movie = payload.dict()
+    movies_length = len(fake_movie_db)
+    if 0 <= id <= movies_length:
+        fake_movie_db[id] = movie
+        return None
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Movie with given id not found"
+    )
