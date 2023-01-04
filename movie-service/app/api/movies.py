@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, status, Header, APIRouter
 
 from .models import MovieIn, MovieOut, MovieUpdate
+from . import db_manager
 
 movies = APIRouter(prefix="/movies")
 
@@ -64,7 +65,7 @@ fake_movie_db = [
 
 @movies.get("/", response_model=list[MovieOut])
 async def all_movies():
-    return fake_movie_db
+    return await db_manager.get_all_movies()
 
 
 @movies.post("/", status_code=status.HTTP_201_CREATED)
