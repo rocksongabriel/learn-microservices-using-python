@@ -70,9 +70,10 @@ async def all_movies():
 
 @movies.post("/", status_code=status.HTTP_201_CREATED)
 async def add_movie(payload: MovieIn):
-    movie = payload.dict()
-    fake_movie_db.append(movie)
-    return {"id": len(fake_movie_db) - 1}
+    movie_id = await db_manager.add_movie(payload)
+    response = {"id": movie_id, **payload.dict()}
+
+    return response
 
 
 @movies.put("/{id}/")
