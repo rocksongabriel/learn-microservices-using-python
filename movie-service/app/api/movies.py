@@ -95,10 +95,11 @@ async def update_movie(id: int, payload: MovieUpdate):
 
 @movies.delete("/{id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_movie(id: int):
-    movies_length = len(fake_movie_db)
-    if 0 <= id <= movies_length:
-        del fake_movie_db[id]
-        return None
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Movie with given id not found"
-    )
+    movie = await db_manager.get_movie(id)
+    if not movie:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Movie with given id not found",
+        )
+
+    return await db_manager.delete_movie(id)

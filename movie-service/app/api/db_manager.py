@@ -18,3 +18,9 @@ async def get_movie(id: int):
     query = movies.select(movies.c.id == id)
 
     return await database.fetch_one(query=query)
+
+
+async def delete_movie(id: int):
+    query = movies.delete().where(movies.c.id == id)
+
+    return await database.execute(query=query)
