@@ -83,14 +83,19 @@ async def add_movie(payload: MovieIn):
 
 @movies.put("/{id}/")
 async def update_movie(id: int, payload: MovieUpdate):
-    movie = payload.dict()
-    movies_length = len(fake_movie_db)
-    if 0 <= id <= movies_length:
-        fake_movie_db[id] = movie
-        return None
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Movie with given id not found"
-    )
+    movie = await db_manager.get_movie(id)
+    if not movie:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Movie with given id not found",
+        )
+
+    update_data = payload.dict(exclude_unset=True)
+    movie_in_db = MovieUpdate(**movie)
+
+    updated_movie = movie_in_db.copy(update=update_data)
+
+    return await db_manager.update_movie(id, updated_movie)
 
 
 @movies.delete("/{id}/", status_code=status.HTTP_204_NO_CONTENT)

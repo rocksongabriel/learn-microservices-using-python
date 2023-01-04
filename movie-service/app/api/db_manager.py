@@ -24,3 +24,9 @@ async def delete_movie(id: int):
     query = movies.delete().where(movies.c.id == id)
 
     return await database.execute(query=query)
+
+
+async def update_movie(id: int, payload: MovieUpdate):
+    query = movies.update().where(movies.c.id == id).values(**payload.dict())
+
+    return await database.execute(query=query)
