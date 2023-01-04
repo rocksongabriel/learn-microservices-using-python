@@ -63,7 +63,7 @@ fake_movie_db = [
 
 
 @movies.get("/", response_model=list[Movie])
-async def index():
+async def all_movies():
     return fake_movie_db
 
 
