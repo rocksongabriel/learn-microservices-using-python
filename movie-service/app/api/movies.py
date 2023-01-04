@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, status, Header, APIRouter
 
-from .models import Movie
+from .models import MovieIn, MovieOut, MovieUpdate
 
 movies = APIRouter(prefix="/movies")
 
@@ -62,20 +62,20 @@ fake_movie_db = [
 ]
 
 
-@movies.get("/", response_model=list[Movie])
+@movies.get("/", response_model=list[MovieOut])
 async def all_movies():
     return fake_movie_db
 
 
 @movies.post("/", status_code=status.HTTP_201_CREATED)
-async def add_movie(payload: Movie):
+async def add_movie(payload: MovieIn):
     movie = payload.dict()
     fake_movie_db.append(movie)
     return {"id": len(fake_movie_db) - 1}
 
 
 @movies.put("/{id}/")
-async def update_movie(id: int, payload: Movie):
+async def update_movie(id: int, payload: MovieUpdate):
     movie = payload.dict()
     movies_length = len(fake_movie_db)
     if 0 <= id <= movies_length:
