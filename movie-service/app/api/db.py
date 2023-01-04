@@ -1,10 +1,14 @@
+import os
+
 from databases import Database
+from dotenv import load_dotenv
 from sqlalchemy import ARRAY, Column, Integer, MetaData, String, Table, create_engine
 
+load_dotenv()
 
-DATABASE_URL = "postgresql://test_user1:testpass1234@localhost:5433/movies_db"
+DATABASE_URI = os.getenv("DATABASE_URI")
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URI)
 metadata = MetaData()
 
 
@@ -18,4 +22,4 @@ movies = Table(
     Column("casts", ARRAY(String)),
 )
 
-database = Database(DATABASE_URL)
+database = Database(DATABASE_URI)
