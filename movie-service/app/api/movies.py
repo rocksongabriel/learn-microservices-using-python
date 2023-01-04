@@ -68,6 +68,11 @@ async def all_movies():
     return await db_manager.get_all_movies()
 
 
+@movies.get("/{id}", response_model=MovieOut)
+async def movie(id: int):
+    return await db_manager.get_movie(id)
+
+
 @movies.post("/", status_code=status.HTTP_201_CREATED)
 async def add_movie(payload: MovieIn):
     movie_id = await db_manager.add_movie(payload)
