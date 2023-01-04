@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, status, Header, APIRouter
 
 from .models import MovieIn, MovieOut, MovieUpdate
 from . import db_manager
+from .service import is_cast_present
 
 movies = APIRouter()
 
@@ -18,6 +19,13 @@ async def movie(id: int):
 
 @movies.post("/", status_code=status.HTTP_201_CREATED)
 async def add_movie(payload: MovieIn):
+    for cast_id in payload.casts_id:
+        if not is_cast_present(cast_id):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Cast with id: {cast_id} not found",
+            )
+
     movie_id = await db_manager.add_movie(payload)
     response = {"id": movie_id, **payload.dict()}
 
@@ -34,6 +42,14 @@ async def update_movie(id: int, payload: MovieUpdate):
         )
 
     update_data = payload.dict(exclude_unset=True)
+
+    if "casts_id" in update_data:
+        for cast_id in payload.casts_id:
+            if not is_cast_present(cast_id):
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Cast with given id:{cast_id} not found",
+                )
     movie_in_db = MovieUpdate(**movie)
 
     updated_movie = movie_in_db.copy(update=update_data)
