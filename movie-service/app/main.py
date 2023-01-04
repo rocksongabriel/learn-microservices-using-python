@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from .models import Movie
 
 app = FastAPI()
@@ -61,6 +61,13 @@ fake_movie_db = [
 ]
 
 
-@app.get("/", response_model=list[Movie])
+@app.get("/", response_model=list[Movie], tags=["Movies"])
 async def index():
     return fake_movie_db
+
+
+@app.post("/", status_code=status.HTTP_201_CREATED, tags=["Movies"])
+async def add_movie(payload: Movie):
+    movie = payload.dict()
+    fake_movie_db.append(movie)
+    return {"id": len(fake_movie_db) - 1}
