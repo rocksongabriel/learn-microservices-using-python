@@ -12,5 +12,6 @@ casts_url = os.getenv("CAST_SERVICE_HOST_URL") or CAST_SERVICE_HOST_URL
 
 
 def is_cast_present(cast_id: int):
+    print(os.getenv("CAST_SERVICE_HOST_URL"))
     response = client.get(f"{casts_url}{cast_id}")
     return True if response.status_code == 200 else False
